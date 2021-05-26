@@ -28,23 +28,24 @@ def increment(ss, cs, ps, par):
     else:
         s = ss[-1] + ds(ss[-1], par)
         c = price_c(s, par, tn-1)
-        p = portfolio(s, c)
+        p = portfolio(s, c, par, tn-1)
         ss, cs, ps = increment(
             np.append(ss, s) , np.append(cs, c), np.append(ps, p), par
             )
         return ss, cs, ps
 
 
-def price_c(s, p, tn):
-    return core.c(s, p.k, p.std, p.r, tn*p.dt, p.ndt)
-
-
 def per_year(x):
     return x/365
 
 
-def portfolio(s, c):
-    return s - c
+def portfolio(s, c, par, tn):
+    delta = core.delta(s, p.k, p.std, p.r, tn*p.dt, p.ndt)
+    return delta*s - c
+
+
+def price_c(s, p, tn):
+    return core.c(s, p.k, p.std, p.r, tn*p.dt, p.ndt)
 
 
 def s0(s):
