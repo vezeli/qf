@@ -37,26 +37,21 @@ def evaluate_bsm_model(s, xs):
     return core.c(*args), core.delta(*args)
 
 
-def compute(s, xs):
-    c, dcds = evaluate_bsm_model(s, xs)
-    p = portfolio(s, c, dcds)
-    return s, c, p
-
-
-def portfolio(s, c, dcds):
-    return dcds*s - c
+def portfolio(s, xs):
+    c, delta = evaluate_bsm_model(s, xs)
+    p = delta*s - c
+    return round(s, 2), round(c, 2), round(p, 2)
 
 
 def run(gs, xs, rs):
     if t(xs) > tend(xs):
         return rs
     else:
-        r = compute(next(gs), xs)
+        r = portfolio(next(gs), xs)
         rs = run(gs, increment_time(xs), append(rs, r))
         return rs
 
 
 def start(s0, xs):
     gs = gen_stonk_price(s0, xs)
-    result = run(gs, xs, np.array([]))
-    return np.round(result, 2)
+    return run(gs, xs, np.array([]))

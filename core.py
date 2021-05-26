@@ -37,5 +37,5 @@ def kappa(s, k, v, r, t):
     return vega(s, k, v, r, t, T)/2/v
 
 
-def gbm(s, mu, std, dt):
-    return mu*s*dt + std*s*np.random.normal()
+def ds(s, m, v, dt):
+    return m*s*dt + v*s*np.random.normal()
