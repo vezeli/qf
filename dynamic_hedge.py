@@ -1,27 +1,23 @@
 import numpy as np
 
-import core
+import model
 
-# arguments = (k, m, v, r, t, tend, dt)
+# f :: (a, a, a, a, a, a, a) -> a
+k    = lambda xs: xs[0]
+m    = lambda xs: xs[1]
+sig  = lambda xs: xs[2]
+r    = lambda xs: xs[3]
+t    = lambda xs: xs[4]
+tend = lambda xs: xs[5]
+dt   = lambda xs: xs[6]
+
+# g :: (a, a, a, a) -> a
+s    = lambda xs: xs[0]
+c    = lambda xs: xs[1]
+dcds = lambda xs: xs[2]
+v    = lambda xs: xs[3]
 
 per_year = lambda x: round(x/365, 5)
-
-k = lambda xs: xs[0]
-m = lambda xs: xs[1]
-sig = lambda xs: xs[2]
-r = lambda xs: xs[3]
-t = lambda xs: xs[4]
-tend = lambda xs: xs[5]
-dt = lambda xs: xs[6]
-
-# NOTE: In Python functions s() and k() are the same but in Haskell they would
-# not be because they would have different function types:
-# k :: (a, a, a, a, a, a, a) -> a
-# s :: (a, a, a) -> a
-s = lambda xs: xs[0]
-c = lambda xs: xs[1]
-dcds = lambda xs: xs[2]
-v = lambda xs: xs[3]
 
 
 def increment_time(xs):
@@ -35,19 +31,19 @@ def append(xs, ys):
         return np.vstack([xs, ys])
 
 
-def gen_stonk_price(s, xs):
+def gen_stonk_gbm(s, xs):
     args = m(xs), sig(xs), dt(xs)
     yield s
-    yield from gen_stonk_price(s + core.ds(s, *args), xs)
+    yield from gen_stonk_gbm(s + model.ds(s, *args), xs)
 
 
-def evaluate_bsm_model(s, xs):
+def evaluate_bsm(s, xs):
     args = s, k(xs), sig(xs), r(xs), t(xs), tend(xs)
-    return core.c(*args), core.delta(*args)
+    return model.c(*args), model.delta(*args)
 
 
-def bsm_model(s, xs):
-    c, d = evaluate_bsm_model(s, xs)
+def bsm(s, xs):
+    c, d = evaluate_bsm(s, xs)
     return s, c, d
 
 
@@ -66,7 +62,7 @@ def cash_balance(rn, rnm, xs):
 
 
 def compute(s, xs, rs):
-    v = cash_balance(bsm_model(s, xs), tail(rs), xs)
+    v = cash_balance(bsm(s, xs), tail(rs), xs)
     return v
 
 
@@ -80,6 +76,6 @@ def run(gs, xs, rs):
 
 
 def start(s0, xs):
-    gs = gen_stonk_price(s0, xs)
+    gs = gen_stonk_gbm(s0, xs)
     result = run(gs, xs, np.array([]))
     return np.round(result, 2)

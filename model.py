@@ -1,5 +1,5 @@
 """
-Black-Scholes-Merton expression for pricing call option contracts.
+Black-Scholes-Merton model for pricing European call options.
 """
 import numpy as np
 from scipy.stats import norm
