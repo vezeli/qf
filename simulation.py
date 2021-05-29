@@ -12,20 +12,9 @@ HF2 = Callable[[RESULT], float]
 
 
 def set_parameters(
-        k: float, m: float, v: float, r: float, t: int, tend: int, dt: int
-        ) -> SIM_PARAMETERS:
-    """Formats parameters.
-
-    Parameters
-    ----------
-    k : strike price [$]
-    m : drift coefficient [%]
-    v : volatility [%]
-    r : risk-free interest rate [%]
-    t : time since establishing contract [days]
-    tend : contract duration [days]
-    dt : simulation time increment [days]
-    """
+    k: float, m: float, v: float, r: float, t: int, tend: int, dt: int
+) -> SIM_PARAMETERS:
+    """Formats simulation parameters."""
     rs = map(_percentage, [m, v, r])
     ts = map(_per_year, [t, tend, dt])
     return (k, *rs, *ts)
@@ -53,7 +42,7 @@ def _run(gs, ps, rs):
 
 
 def _compute(s, ps, rs):
-    v = _cash_balance(_bsm(s, ps), _tail(rs), ps)
+    v = _cash_balance(evaluate_bsm(s, ps), _tail(rs), ps)
     return v
 
 
@@ -64,14 +53,10 @@ def _cash_balance(rn, rnm, ps):
     return sn, cn, dn, vn
 
 
-def _bsm(s, ps):
-    c, d = _evaluate_bsm(s, ps)
-    return s, c, d
-
-
-def _evaluate_bsm(s, ps):
+def evaluate_bsm(s, ps):
+    """Evaluates Black-Scholes model for a European call option."""
     args = s, _k(ps), _sig(ps), _r(ps), _t(ps), _tend(ps)
-    return model.c(*args), model.delta(*args)
+    return s, model.c(*args), model.delta(*args)
 
 
 _k:    HF1 = lambda ps: ps[0]
@@ -87,7 +72,7 @@ _c:    HF2 = lambda ps: ps[1]
 _dcds: HF2 = lambda ps: ps[2]
 _v:    HF2 = lambda ps: ps[3]
 
-_per_year: Callable[[int], float] = lambda x: x/365
+_per_year: Callable[[int], float] = lambda x: round(x/365, 5)
 _percentage: Callable[[float], float] = lambda x: x/100
 
 
