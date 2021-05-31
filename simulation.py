@@ -12,12 +12,12 @@ HF2 = Callable[[RESULT], float]
 
 
 def set_parameters(
-    k: float, m: float, v: float, r: float, t: int, tend: int, dt: int
+    k: float, m: float, v: float, r: float, tend: int, dt: int
 ) -> SIM_PARAMETERS:
     """Formats simulation parameters."""
     rs = map(_percentage, [m, v, r])
-    ts = map(_per_year, [t, tend, dt])
-    return (k, *rs, *ts)
+    ts = map(_per_year, [tend, dt])
+    return (k, *rs, 0, *ts)
 
 
 def start(initial_price: float, ps: SIM_PARAMETERS) -> np.ndarray:
