@@ -22,7 +22,7 @@ results = (simulation.start(PRICE, _parameters) for _ in range(SIMULATIONS))
 
 fig, (ax1, ax2, ax3) = plt.subplots(3)
 for r in results:
-    stock_price, call_price, delta, cash_balance = r[:,0], r[:,1], r[:,2], r[:,3]
+    stock_price, call_price, delta, cash_balance = r.T
     ax1.plot(range(len(r)), stock_price)
     ax1.set_xlabel("Time")
     ax1.set_ylabel("Stock price")
