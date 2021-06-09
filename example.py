@@ -32,4 +32,5 @@ for r in results:
     ax3.plot(range(len(r)), call_price - delta*stock_price + cash_balance)
     ax3.set_xlabel("Time")
     ax3.set_ylabel("P&L")
-plt.show()
+else:
+    plt.show()
