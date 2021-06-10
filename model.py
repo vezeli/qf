@@ -36,7 +36,7 @@ def vega(s, k, v, r, t, tend):
     return s*np.sqrt(tau)/np.sqrt(2*np.pi)*np.e**(-d1(s, k, v, r, t, tend)**2/2)
 
 
-def kappa(s, k, v, r, t):
+def kappa(s, k, v, r, t, tend):
     return vega(s, k, v, r, t, tend)/2/v
 
 
